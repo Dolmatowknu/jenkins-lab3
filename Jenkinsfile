@@ -1,11 +1,6 @@
 pipeline {
             options {timestamps()}
 
-            environment {
-                registry = "andriimiroshnyk/jenkins-flask-app"
-                registryCredential = 'dockerhub_id'
-                dockerImage = ''
-            }
 
             agent none
             stages {
@@ -30,7 +25,7 @@ pipeline {
                       sh 'apk add --update python3 py-pip'
                       sh 'pip install Flask'
                       sh 'pip install xmlrunner'
-                      sh 'python3 app_tests.py'
+                      sh 'python3 test.py'
                     }
                     post {
                         always {
