@@ -2,7 +2,7 @@ pipeline {
             options {timestamps()}
             environment {
                 registry = "dolmatow/jenkins-lab3"
-                registryCredential = 'dockerhub_id'
+                registryCredential = 'docker-hub2'
                 dockerImage = ''
             }
 
