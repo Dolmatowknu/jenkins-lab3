@@ -1,42 +1,48 @@
 pipeline {
-    options { timestamps()}
+            options {timestamps()}
 
-    agent none
-    stages {
-        stage('Check scm') {
-            agent any
-            steps {
-                checkout scm
+            environment {
+                registry = "andriimiroshnyk/jenkins-flask-app"
+                registryCredential = 'dockerhub_id'
+                dockerImage = ''
             }
-        }
-        stage('Build') {
-            steps {
-                echo "Building ...${BUILD_NUMBER}"
-                echo "Building completed"
-            }
-        }
-        stage('Test') {
-            agent {docker {image 'alpine'
-                args '-u=\"root\"'
-                        }
+
+            agent none
+            stages {
+                stage('Check scm') {
+                    agent any
+                    steps {
+                      checkout scm
                     }
-            steps {
-                sh 'apk add --update python3 py-pip'
-                sh 'pip install Flask'
-                sh 'pip install xmlrunner'
-                sh 'python3 app_tests.py'
+                }// stage Build
+                stage('Build') {
+                    steps {
+                      echo "Building ...${BUILD_NUMBER}"
+                      echo "Build completed"
+                    }
+                }// stage Build
+                stage('Test') {
+                    agent { docker { image 'alpine'
+                              args '-u=\"root\"'
+                            }
+                        }
+                    steps {
+                      sh 'apk add --update python3 py-pip'
+                      sh 'pip install Flask'
+                      sh 'pip install xmlrunner'
+                      sh 'python3 app_tests.py'
+                    }
+                    post {
+                        always {
+                            junit 'test-reports/*.xml'
+                            }
+                        success {
+                            echo "Application testing successfully completed "
+                        }
+                        failure {
+                            echo "Oooppss!!! Tests failed!"
+                        } // post
+                    } 
+                } // stage Test
             }
-            post {
-                always {
-                    junit 'test-reports/*.xml'
-                }
-                success {
-                    echo "Application testing successfully completed"
-                }
-                failure {
-                    echo "Oops.. Tests failed"
-                }
-            }
-        }
-    }
 }
