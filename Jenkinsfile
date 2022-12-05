@@ -40,9 +40,9 @@ pipeline {
                         }
                         failure {
                             echo "Oooppss!!! Tests failed!"
-                        } // post
+                        }
                     } 
-                } // stage Test
+                }
                                 stage('Image building') {
                     steps {
                         script {
